@@ -1,0 +1,166 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 12
+skinparam classBackgroundColor #F4F8FC
+skinparam classBorderColor #274560
+skinparam ArrowColor #38566F
+hide empty members
+title FILEY — Diagrama de clases
+
+package filey {
+class Main {
+  + {static} main(args: String[]): void
+}
+}
+package filey.datos {
+class Configuracion {
+  - limiteDescuento: LocalDate
+  - limiteLiquidacion: LocalDate
+  - limiteReserva: LocalDate
+  - diasParaPagarReserva: int
+  - diasAnticipacionAviso: int
+  + Configuracion(limiteDescuento: LocalDate, limiteLiquidacion: LocalDate, limiteReserva: LocalDate, diasParaPagarReserva: int, diasAnticipacionAviso: int)
+  + getDiasAnticipacionAviso(): int
+  + getDiasParaPagarReserva(): int
+  + getLimiteDescuento(): LocalDate
+  + getLimiteLiquidacion(): LocalDate
+  + getLimiteReserva(): LocalDate
+}
+enum EstadoStand {
+  DISPONIBLE
+  RESERVADO
+  OCUPADO
+  BLOQUEADO
+}
+class Editorial {
+  - id: int
+  - nombre: String
+  + Editorial(id: int, nombre: String)
+  + actualizar(mensaje: String): void
+  + getId(): int
+  + getNombre(): String
+}
+class Pago {
+  - importe: BigDecimal
+  - fecha: LocalDate
+  + Pago(importe: BigDecimal, fecha: LocalDate)
+  + getFecha(): LocalDate
+  + getImporte(): BigDecimal
+}
+class Reserva {
+  - id: int
+  - editorial: Editorial
+  - stand: Stand
+  - fechaCreacion: LocalDate
+  - vencimiento: LocalDate
+  - limiteLiquidacion: LocalDate
+  - precioTotal: BigDecimal
+  - pagos: List<Pago>
+  - vencida: boolean
+  ~ Reserva(id: int, editorial: Editorial, stand: Stand, fechaCreacion: LocalDate, vencimiento: LocalDate, limiteLiquidacion: LocalDate)
+  + alcanzaMinimo(): boolean
+  + getAbonado(): BigDecimal
+  + getEditorial(): Editorial
+  + getFechaCreacion(): LocalDate
+  + getId(): int
+  + getLimiteLiquidacion(): LocalDate
+  + getPagos(): List<Pago>
+  + getPendiente(): BigDecimal
+  + getPorcentajePagado(): BigDecimal
+  + getPrecioTotal(): BigDecimal
+  + getStand(): Stand
+  + getVencimiento(): LocalDate
+  + isVencida(): boolean
+  + registrarPago(importe: BigDecimal, fecha: LocalDate): void
+  + vencerSiCorresponde(fecha: LocalDate): boolean
+}
+class Stand {
+  - id: int
+  - ancho: BigDecimal
+  - largo: BigDecimal
+  - precioPorMetroCuadrado: BigDecimal
+  - estado: EstadoStand
+  - reservaActual: Reserva
+  + Stand(id: int, ancho: BigDecimal, largo: BigDecimal, precioPorMetroCuadrado: BigDecimal)
+  + bloquear(): void
+  ~ confirmarOcupacion(reserva: Reserva): void
+  + desbloquear(): void
+  + getAncho(): BigDecimal
+  + getEstado(): EstadoStand
+  + getId(): int
+  + getLargo(): BigDecimal
+  + getPrecioPorMetroCuadrado(): BigDecimal
+  + getPrecioTotal(): BigDecimal
+  + getSuperficie(): BigDecimal
+  ~ liberar(reserva: Reserva): void
+  + reservar(idReserva: int, editorial: Editorial, fecha: LocalDate, vencimiento: LocalDate, limiteLiquidacion: LocalDate): Reserva
+}
+}
+package filey.notificaciones {
+interface Observador {
+  + actualizar(mensaje: String): void
+}
+interface Sujeto {
+  + notificar(idEditorial: int, mensaje: String): void
+  + retirar(idEditorial: int, observador: Observador): void
+  + suscribir(idEditorial: int, observador: Observador): void
+}
+class Notificador {
+  - observadores: Map<Integer, List<Observador>>
+  + Notificador()
+  + notificar(idEditorial: int, mensaje: String): void
+  + retirar(idEditorial: int, observador: Observador): void
+  + suscribir(idEditorial: int, observador: Observador): void
+}
+}
+package filey.negocio {
+class SistemaFiley {
+  - configuracion: Configuracion
+  - notificador: Sujeto
+  - stands: Map<Integer, Stand>
+  - editoriales: Map<Integer, Editorial>
+  - reservas: Map<Integer, Reserva>
+  - avisosEmitidos: Set<String>
+  - siguienteReserva: int
+  + SistemaFiley(configuracion: Configuracion, notificador: Sujeto)
+  + bloquearStand(idStand: int): void
+  + comprobarFechas(fecha: LocalDate): void
+  + consultarDisponibles(): List<Stand>
+  + consultarReservas(): List<Reserva>
+  + crearReserva(idEditorial: int, idStand: int, fecha: LocalDate): Reserva
+  + desbloquearStand(idStand: int): void
+  + registrarEditorial(editorial: Editorial): void
+  + registrarPago(idReserva: int, importe: BigDecimal, fecha: LocalDate): void
+  + registrarStand(stand: Stand): void
+}
+}
+Editorial ..|> Observador
+Notificador ..|> Sujeto
+Notificador "1" o-- "0..*" Observador : suscripciones por editorial
+SistemaFiley "1" --> "1" Configuracion : configuracion
+SistemaFiley "1" --> "1" Sujeto : notificador
+SistemaFiley "1" o-- "0..*" Stand : stands
+SistemaFiley "1" o-- "0..*" Editorial : editoriales
+SistemaFiley "1" o-- "0..*" Reserva : historial
+Reserva "0..*" --> "1" Editorial : editorial
+Reserva "0..*" --> "1" Stand : stand
+Stand "0..1" --> "0..1" Reserva : reservaActual
+Reserva "1" *-- "0..*" Pago : pagos
+Stand --> EstadoStand : estado
+Main ..> SistemaFiley : demuestra
+Main ..> Configuracion
+Main ..> Notificador
+Main ..> Stand
+Main ..> Editorial
+Main ..> Reserva
+legend bottom
+  + público | - privado | ~ acceso de paquete
+  Se muestran todos los atributos y los métodos públicos o de paquete.
+  Se omiten auxiliares privados y métodos implícitos de Enum.
+  reservaActual es una asociación adicional al historial de reservas del stand.
+endlegend
+@enduml
+
