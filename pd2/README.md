@@ -2,6 +2,8 @@
 
 Backend académico en Java 17 para administrar stands, editoriales, reservas y pagos de la Feria Internacional de la Lectura Yucatán. Incluye fechas configurables y notificaciones en consola mediante Observer. Los datos permanecen en memoria durante la ejecución; no requiere interfaz gráfica, base de datos ni dependencias externas.
 
+[Ver demostración de FILEY en YouTube](https://youtu.be/L7G5_FyXwdo)
+
 ## Compilar y ejecutar
 
 Instalar un **JDK 17** y abrir una terminal en la raíz del repositorio. Ejecutar `cd pd2` antes de los siguientes comandos.
