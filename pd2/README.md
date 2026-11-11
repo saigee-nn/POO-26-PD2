@@ -4,7 +4,7 @@ Backend académico en Java 17 para administrar stands, editoriales, reservas y p
 
 ## Compilar y ejecutar
 
-Instalar un **JDK 17** y abrir una terminal en la carpeta `FILEY-POO-Java` extraída del ZIP.
+Instalar un **JDK 17** y abrir una terminal en la raíz del repositorio. Ejecutar `cd pd2` antes de los siguientes comandos.
 
 En Linux/macOS (Bash):
 
