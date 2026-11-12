@@ -1,0 +1,67 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam linetype ortho
+
+class CalcMVC {
+  +main(args: String[]): void
+}
+
+class CalcModel {
+  -{static} INITIAL_VALUE: String = "1"
+  -m_total: BigDecimal
+  ~CalcModel()
+  +reset(): void
+  +multiplyBy(operand: String): void
+  +addBy(operand: String): void
+  +setValue(value: String): void
+  +getValue(): String
+}
+
+class CalcView {
+  -{static} INITIAL_VALUE: String = "1"
+  -m_userInputTf: JTextField
+  -m_totalTf: JTextField
+  -m_addBtn: JButton
+  -m_multiplyBtn: JButton
+  -m_clearBtn: JButton
+  -m_model: CalcModel
+  ~CalcView(model: CalcModel)
+  ~reset(): void
+  ~getUserInput(): String
+  ~setTotal(newTotal: String): void
+  ~showError(errMessage: String): void
+  ~addAdditionListener(listener: ActionListener): void
+  ~addMultiplyListener(listener: ActionListener): void
+  ~addClearListener(listener: ActionListener): void
+}
+
+class CalcController {
+  -m_model: CalcModel
+  -m_view: CalcView
+  ~CalcController(model: CalcModel, view: CalcView)
+}
+
+class "CalcController.AdditionListener" as AdditionListener <<inner class>> {
+  +actionPerformed(e: ActionEvent): void
+}
+class "CalcController.MultiplyListener" as MultiplyListener <<inner class>> {
+  +actionPerformed(e: ActionEvent): void
+}
+class "CalcController.ClearListener" as ClearListener <<inner class>> {
+  +actionPerformed(e: ActionEvent): void
+}
+
+CalcMVC ..> CalcModel : crea
+CalcMVC ..> CalcView : crea
+CalcMVC ..> CalcController : crea
+CalcView --> CalcModel : usa
+CalcController --> CalcModel : consulta y modifica
+CalcController --> CalcView : escucha y actualiza
+CalcView ..> AdditionListener : registra
+CalcView ..> MultiplyListener : registra
+CalcView ..> ClearListener : registra
+CalcController +-- AdditionListener
+CalcController +-- MultiplyListener
+CalcController +-- ClearListener
+@enduml

@@ -1,48 +1,42 @@
-import java.awt.*;
-import javax.swing.*;
-import java.awt.event.*;
+import java.awt.FlowLayout;
+import java.awt.event.ActionListener;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 class CalcView extends JFrame {
-    //... Constants
     private static final String INITIAL_VALUE = "1";
 
-    //... Components
-    private JTextField m_userInputTf = new JTextField(5);
-    private JTextField m_totalTf     = new JTextField(20);
-    private JButton    m_multiplyBtn = new JButton("Multiply");
-    private JButton    m_clearBtn    = new JButton("Clear");
+    private final JTextField m_userInputTf = new JTextField(5);
+    private final JTextField m_totalTf = new JTextField(20);
+    private final JButton m_addBtn = new JButton("Add");
+    private final JButton m_multiplyBtn = new JButton("Multiply");
+    private final JButton m_clearBtn = new JButton("Clear");
+    private final CalcModel m_model;
 
-    private CalcModel m_model;
-
-    //===================================================== constructor
-    /** Constructor */
     CalcView(CalcModel model) {
-        //... Set up the logic
         m_model = model;
         m_model.setValue(INITIAL_VALUE);
 
-        //... Initialize components
         m_totalTf.setText(m_model.getValue());
         m_totalTf.setEditable(false);
 
-        //... Layout the components.
-        JPanel content = new JPanel();
-        content.setLayout(new FlowLayout());
+        JPanel content = new JPanel(new FlowLayout());
         content.add(new JLabel("Input"));
         content.add(m_userInputTf);
+        content.add(m_addBtn);
         content.add(m_multiplyBtn);
         content.add(new JLabel("Total"));
         content.add(m_totalTf);
         content.add(m_clearBtn);
 
-        //... finalize layout
-        this.setContentPane(content);
-        this.pack();
-
-        this.setTitle("Simple Calc - MVC");
-        // The window closing event should probably be passed to the
-        // Controller in a real program, but this is a short example.
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setContentPane(content);
+        pack();
+        setTitle("Simple Calc - MVC");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
     void reset() {
@@ -61,11 +55,15 @@ class CalcView extends JFrame {
         JOptionPane.showMessageDialog(this, errMessage);
     }
 
-    void addMultiplyListener(ActionListener mal) {
-        m_multiplyBtn.addActionListener(mal);
+    void addAdditionListener(ActionListener listener) {
+        m_addBtn.addActionListener(listener);
     }
 
-    void addClearListener(ActionListener cal) {
-        m_clearBtn.addActionListener(cal);
+    void addMultiplyListener(ActionListener listener) {
+        m_multiplyBtn.addActionListener(listener);
+    }
+
+    void addClearListener(ActionListener listener) {
+        m_clearBtn.addActionListener(listener);
     }
 }

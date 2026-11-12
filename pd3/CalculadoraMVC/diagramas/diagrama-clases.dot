@@ -1,0 +1,65 @@
+digraph UML {
+  graph [rankdir=LR, bgcolor="white", pad="0.25", nodesep="0.55", ranksep="0.75", splines=polyline, fontname="Arial", label="Calculadora MVC - PD3", labelloc=t, fontsize=18];
+  node [shape=plain, fontname="Arial", fontsize=10];
+  edge [fontname="Arial", fontsize=9, color="#333333", arrowsize=0.75];
+
+  CalcMVC [label=<
+    <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5">
+      <TR><TD BGCOLOR="#E7EEF7"><B>CalcMVC</B></TD></TR>
+      <TR><TD ALIGN="LEFT">+ main(args: String[]): void</TD></TR>
+    </TABLE>>];
+  CalcModel [label=<
+    <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5">
+      <TR><TD BGCOLOR="#E7EEF7"><B>CalcModel</B></TD></TR>
+      <TR><TD ALIGN="LEFT">- INITIAL_VALUE: String = "1" {static}</TD></TR>
+      <TR><TD ALIGN="LEFT">- m_total: BigDecimal</TD></TR>
+      <TR><TD ALIGN="LEFT">~ CalcModel()</TD></TR>
+      <TR><TD ALIGN="LEFT">+ reset(): void</TD></TR>
+      <TR><TD ALIGN="LEFT">+ multiplyBy(operand: String): void</TD></TR>
+      <TR><TD ALIGN="LEFT">+ addBy(operand: String): void</TD></TR>
+      <TR><TD ALIGN="LEFT">+ setValue(value: String): void</TD></TR>
+      <TR><TD ALIGN="LEFT">+ getValue(): String</TD></TR>
+    </TABLE>>];
+  CalcView [label=<
+    <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5">
+      <TR><TD BGCOLOR="#E7EEF7"><B>CalcView</B> (JFrame)</TD></TR>
+      <TR><TD ALIGN="LEFT">- INITIAL_VALUE: String = "1" {static}</TD></TR>
+      <TR><TD ALIGN="LEFT">- m_userInputTf: JTextField</TD></TR>
+      <TR><TD ALIGN="LEFT">- m_totalTf: JTextField</TD></TR>
+      <TR><TD ALIGN="LEFT">- m_addBtn: JButton</TD></TR>
+      <TR><TD ALIGN="LEFT">- m_multiplyBtn: JButton</TD></TR>
+      <TR><TD ALIGN="LEFT">- m_clearBtn: JButton</TD></TR>
+      <TR><TD ALIGN="LEFT">- m_model: CalcModel</TD></TR>
+      <TR><TD ALIGN="LEFT">~ CalcView(model: CalcModel)</TD></TR>
+      <TR><TD ALIGN="LEFT">~ reset(): void</TD></TR>
+      <TR><TD ALIGN="LEFT">~ getUserInput(): String</TD></TR>
+      <TR><TD ALIGN="LEFT">~ setTotal(newTotal: String): void</TD></TR>
+      <TR><TD ALIGN="LEFT">~ showError(errMessage: String): void</TD></TR>
+      <TR><TD ALIGN="LEFT">~ addAdditionListener(listener: ActionListener): void</TD></TR>
+      <TR><TD ALIGN="LEFT">~ addMultiplyListener(listener: ActionListener): void</TD></TR>
+      <TR><TD ALIGN="LEFT">~ addClearListener(listener: ActionListener): void</TD></TR>
+    </TABLE>>];
+  CalcController [label=<
+    <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5">
+      <TR><TD BGCOLOR="#E7EEF7"><B>CalcController</B></TD></TR>
+      <TR><TD ALIGN="LEFT">- m_model: CalcModel</TD></TR>
+      <TR><TD ALIGN="LEFT">- m_view: CalcView</TD></TR>
+      <TR><TD ALIGN="LEFT">~ CalcController(model, view)</TD></TR>
+    </TABLE>>];
+  Listeners [label=<
+    <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5">
+      <TR><TD BGCOLOR="#E7EEF7"><B>Clases internas del controlador</B></TD></TR>
+      <TR><TD ALIGN="LEFT">AdditionListener: + actionPerformed(e: ActionEvent): void</TD></TR>
+      <TR><TD ALIGN="LEFT">MultiplyListener: + actionPerformed(e: ActionEvent): void</TD></TR>
+      <TR><TD ALIGN="LEFT">ClearListener: + actionPerformed(e: ActionEvent): void</TD></TR>
+    </TABLE>>];
+
+  CalcMVC -> CalcModel [label="crea", style=dashed, constraint=false];
+  CalcMVC -> CalcView [label="crea", style=dashed, constraint=false];
+  CalcMVC -> CalcController [label="crea", style=dashed];
+  CalcView -> CalcModel [label="usa", arrowhead=vee];
+  CalcController -> CalcModel [label="consulta y modifica", arrowhead=vee, constraint=false];
+  CalcController -> CalcView [label="escucha y actualiza", arrowhead=vee];
+  CalcController -> Listeners [label="contiene", arrowhead=diamond];
+  CalcView -> Listeners [label="registra listeners", style=dashed, arrowhead=vee];
+}
