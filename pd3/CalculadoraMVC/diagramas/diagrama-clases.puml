@@ -18,7 +18,7 @@ class CalcModel {
   +getValue(): String
 }
 
-class CalcView {
+class CalcView extends JFrame {
   -{static} INITIAL_VALUE: String = "1"
   -m_userInputTf: JTextField
   -m_totalTf: JTextField
