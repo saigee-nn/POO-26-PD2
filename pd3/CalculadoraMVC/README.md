@@ -27,3 +27,7 @@ También se puede abrir la carpeta en Visual Studio Code y ejecutar `CalcMVC.jav
 ## Diagrama de clases
 
 La versión SVG está en `diagramas/diagrama-clases.svg`. El archivo editable `diagramas/diagrama-clases.puml` contiene el mismo diagrama.
+
+## Video
+
+https://youtu.be/szFk8_SVzvY
