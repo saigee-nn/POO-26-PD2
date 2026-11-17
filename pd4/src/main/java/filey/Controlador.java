@@ -3,6 +3,7 @@ package filey;
 import java.sql.SQLException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.concurrent.ThreadLocalRandom;
 
 record Controlador(Consultas consultas, VistaConsola vista, Registros registros) {
     void listar() throws SQLException {
@@ -33,19 +34,42 @@ record Controlador(Consultas consultas, VistaConsola vista, Registros registros)
             }
             case "prueba30" -> {
                 exigir(a, 1);
-                if (consultas.editoriales().stream().anyMatch(e -> e.id() == 3)) {
-                    throw new IllegalArgumentException("El ID de editorial 3 ya existe. No se aplicó el ejemplo.");
-                }
-                int stand = consultas.stands().stream().mapToInt(Stand::id).max().orElse(0) + 1;
-                int reserva = consultas.reservas().stream().mapToInt(Reserva::id).max().orElse(0) + 1;
-                registros.editorial(3, "PruebaStandDB");
-                registros.stand(stand, new BigDecimal("2"), new BigDecimal("5"), new BigDecimal("100"));
-                LocalDate hoy = LocalDate.now();
-                registros.reservar(reserva, stand, 3, hoy.plusDays(3), hoy.plusDays(10));
-                registros.pagar(reserva, new BigDecimal("300.00"));
+                pruebaConDosStands();
             }
             default -> throw new IllegalArgumentException("Operaciones: editorial, stand, reservar, pagar, prueba30.");
         }
+    }
+
+    private void pruebaConDosStands() throws SQLException {
+        final int editorialId = 3;
+        final int reservaPrueba = 30003;
+        if (consultas.reservas().stream().anyMatch(r -> r.id() == reservaPrueba)) {
+            throw new IllegalArgumentException("La reserva 30003 ya existe. No se repitió la prueba.");
+        }
+        var editorial = consultas.editoriales().stream().filter(e -> e.id() == editorialId).findFirst();
+        if (editorial.isEmpty()) {
+            registros.editorial(editorialId, "PruebaStandDB");
+        } else if (!editorial.get().nombre().equals("PruebaStandDB")) {
+            throw new IllegalArgumentException("El ID 3 pertenece a otra editorial.");
+        }
+
+        int primerId = consultas.stands().stream().mapToInt(Stand::id).max().orElse(0) + 1;
+        var azar = ThreadLocalRandom.current();
+        int elegido = primerId + azar.nextInt(2);
+        BigDecimal tarifa = new BigDecimal("100.00");
+        BigDecimal total = BigDecimal.ZERO;
+        for (int id = primerId; id <= primerId + 1; id++) {
+            BigDecimal ancho = BigDecimal.valueOf(azar.nextInt(2, 6));
+            BigDecimal largo = BigDecimal.valueOf(azar.nextInt(3, 8));
+            registros.stand(id, ancho, largo, tarifa);
+            if (id == elegido) total = ancho.multiply(largo).multiply(tarifa);
+        }
+        LocalDate hoy = LocalDate.now();
+        registros.reservar(reservaPrueba, elegido, editorialId, hoy.plusDays(3), hoy.plusDays(10));
+        BigDecimal abono = total.multiply(new BigDecimal("0.30")).setScale(2);
+        registros.pagar(reservaPrueba, abono);
+        System.out.printf("Reserva %d, stand %d, total $%s, abono del 30%% $%s%n",
+                reservaPrueba, elegido, total, abono);
     }
 
     private static void exigir(String[] args, int cantidad) {
