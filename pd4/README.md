@@ -1,6 +1,8 @@
 # PD4 · Stands de FILEY
 
-La actividad retoma los stands y editoriales del PD2. Main abre una conexión JDBC con PostgreSQL en Neon. El controlador pide las tres listas a Consultas, que ejecuta un SELECT por tabla y convierte las filas en objetos. VistaConsola imprime los resultados.
+La actividad retoma los stands y editoriales del PD2. Main solicita a ConexionBD una conexión JDBC con PostgreSQL en Neon. El controlador pide las tres listas a Consultas, que ejecuta un SELECT por tabla y convierte las filas en objetos. VistaConsola imprime los resultados.
+
+ConexionBD solo abre la conexión. Consultas contiene los SELECT de los listados y Registros las operaciones para guardar editoriales, stands, reservas y pagos. Inicializacion ejecuta los scripts de creación y recuperación de datos. Estas clases reciben la conexión que Main abre y cierra; Main también controla la transacción, sin ejecutar SQL directamente.
 
 ## Ejecución
 
@@ -55,6 +57,10 @@ Controlador --> VistaConsola
 Consultas ..> Stand
 Consultas ..> Editorial
 Consultas ..> Reserva
+class Inicializacion {
+  ~preparar(Connection conexion)
+  -leer(String archivo) String
+}
 class ConexionBD {
   +abrir() Connection
 }
