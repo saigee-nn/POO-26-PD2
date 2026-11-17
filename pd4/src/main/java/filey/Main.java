@@ -17,6 +17,7 @@ public class Main {
                     }
                     sql.execute(Inicializacion.leer("filey.sql"));
                     if (nueva) sql.execute(Inicializacion.leer("ejemplo.sql"));
+                    sql.execute(Inicializacion.leer("historial_pd2.sql"));
                 }
                 var controlador = new Controlador(new Consultas(db), new VistaConsola(), new Registros(db));
                 controlador.operar(args);
