@@ -31,7 +31,20 @@ record Controlador(Consultas consultas, VistaConsola vista, Registros registros)
                 exigir(a, 3);
                 registros.pagar(Integer.parseInt(a[1]), new BigDecimal(a[2]));
             }
-            default -> throw new IllegalArgumentException("Operaciones: editorial, stand, reservar, pagar.");
+            case "prueba30" -> {
+                exigir(a, 1);
+                if (consultas.editoriales().stream().anyMatch(e -> e.id() == 3)) {
+                    throw new IllegalArgumentException("El ID de editorial 3 ya existe. No se aplicó el ejemplo.");
+                }
+                int stand = consultas.stands().stream().mapToInt(Stand::id).max().orElse(0) + 1;
+                int reserva = consultas.reservas().stream().mapToInt(Reserva::id).max().orElse(0) + 1;
+                registros.editorial(3, "PruebaStandDB");
+                registros.stand(stand, new BigDecimal("2"), new BigDecimal("5"), new BigDecimal("100"));
+                LocalDate hoy = LocalDate.now();
+                registros.reservar(reserva, stand, 3, hoy.plusDays(3), hoy.plusDays(10));
+                registros.pagar(reserva, new BigDecimal("300.00"));
+            }
+            default -> throw new IllegalArgumentException("Operaciones: editorial, stand, reservar, pagar, prueba30.");
         }
     }
 
