@@ -164,3 +164,7 @@ erDiagram
         date limite_liquidacion
     }
 ```
+
+## Video
+
+[Video de PD5](https://youtu.be/szFk8_SVzvY?si=Q8ldRTKtIUnfxqpc)
